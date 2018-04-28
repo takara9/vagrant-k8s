@@ -5,14 +5,16 @@
 #
 
 Vagrant.configure(2) do |config|
-  (1..3).each do |i|
+  (1..4).each do |i|
     config.vm.define "k8s#{i}" do |s|
       s.vm.box = "ubuntu/xenial64"
       s.vm.hostname = "k8s#{i}"
 
       public_ip = "192.168.1.#{i+90}"
       s.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
-
+      if i == 1 then
+        s.vm.network :forwarded_port, host: 8001, guest: 8001
+      end
       private_ip = "172.42.42.#{i+10}"
       s.vm.network :private_network, ip: private_ip, netmask: "255.255.255.0",
         auto_config: true,
@@ -20,7 +22,11 @@ Vagrant.configure(2) do |config|
 
       s.vm.provider "virtualbox" do |v|
         v.name = "k8s#{i}"
-        v.memory = 2048
+        if i == 1 then
+          v.memory = 2048
+        else
+          v.memory = 1024
+        end
         v.gui = false
       end
 
