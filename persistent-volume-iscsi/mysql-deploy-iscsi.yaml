@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-server
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: test
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_USER
+          value: dev
+        - name: MYSQL_PASSWORD
+          value: dev
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: iscsivol
+          subPath: mysql-data
+      volumes:
+      - name: iscsivol
+        iscsi:
+          targetPortal: 192.168.1.70
+          iqn: iqn.2016-04.world.srv:target00
+          lun: 0
+          fsType: ext4
+          readOnly: false
+          chapAuthDiscovery: true
+          chapAuthSession: true
+          secretRef: 
+            name: chap-secret

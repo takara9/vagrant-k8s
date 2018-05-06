@@ -1,0 +1,81 @@
+# coding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  hosts = Array["target", "initiator"]
+  ip_x = 0
+  hosts.each do |host|
+    config.vm.define vm_name = "#{host}" do |config|
+      config.vm.hostname = host
+      public_ip = "192.168.1.#{ip_x+70}"
+      ip_x = ip_x + 1      
+      config.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
+      #
+      config.vm.provider "virtualbox" do |vb|
+        vb.gui = false
+        vb.memory = "512"
+      end
+
+      
+      # iscsiイニシエータ (クライアント)
+      if host == "initiator" then
+        target_ip = "#{public_ip}"
+        config.vm.provision "shell", inline: <<-SHELL
+        apt-get update
+        apt-get install -y open-iscsi
+        sed 's/^InitiatorName=/InitiatorName=iqn.2016-04.world.srv:target00/' -i /etc/iscsi/initiatorname.iscsi
+        sed 's/^#node.session.auth.authmethod = CHAP/node.session.auth.authmethod = CHAP/' -i /etc/iscsi/iscsid.conf
+        sed 's/^#node.session.auth.username = username/node.session.auth.username = username/' -i /etc/iscsi/iscsid.conf
+        sed 's/^#node.session.auth.password = password/node.session.auth.password = password/' -i /etc/iscsi/iscsid.conf
+        systemctl restart iscsid open-iscsi
+        iscsiadm -m discovery -t sendtargets -p 192.168.1.70
+        iscsiadm -m node --login -p 192.168.1.70
+        SHELL
+
+      end
+      
+      # iscsiターゲット (サーバー)
+      if host == "target" then
+        config.vm.provider :virtualbox do |p|
+          vdisk = "vdisk.vdi"
+          # iscsi device 4Gi
+          if not File.exist?(vdisk) then
+            p.customize [
+              'createmedium', 'disk',
+              '--filename', vdisk,
+              '--format', 'VDI',
+              '--size', 4096]
+          end
+
+          p.customize [
+            'storageattach', :id,
+            '--storagectl', 'SCSI',
+            '--port', 2,
+            '--device', 0,
+            '--type', 'hdd',
+            '--medium', vdisk]
+        end
+        
+        
+        config.vm.provision "shell", inline: <<-SHELL
+        apt-get update
+        apt-get install -y iscsitarget iscsitarget-dkms
+        sed 's/^ISCSITARGET_ENABLE=false/ISCSITARGET_ENABLE=true/' -i /etc/default/iscsitarget
+        cat >> /etc/iet/ietd.conf <<EOF
+Target iqn.2016-04.world.srv:target00
+  Lun 0 Path=/dev/sdc,Type=fileio
+  incominguser username password 
+EOF
+        mkfs.ext4 -q /dev/sdc
+        mount -t ext4 /dev/sdc /mnt
+        mkdir /mnt/mysql-data
+        chmod 0777 /mnt/mysql-data
+        umount /mnt 
+        systemctl restart iscsitarget
+        SHELL
+      end
+    end
+  end
+end
