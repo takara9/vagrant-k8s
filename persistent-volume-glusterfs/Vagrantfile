@@ -1,0 +1,76 @@
+# coding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+
+  glusterfs_version = "3.12"
+
+  # We setup three nodes to be gluster hosts, and one heketi server
+  (1..3).each do |i|
+
+    config.vm.define vm_name = "gluster-#{i}" do |config|
+      config.cache.scope = :box
+      config.vm.hostname = vm_name
+      ip = "192.168.1.#{i+60}"
+      config.vm.network :public_network, ip: ip, bridge: "en0: Ethernet"
+
+      config.vm.provider :virtualbox do |p|
+        vdisk = "vdisk/sdb-#{i}.vdi"
+        if not File.exist?(vdisk) then
+          p.customize [
+            'createmedium', 'disk',
+            '--filename', vdisk,
+            '--format', 'VDI',
+            '--size', 20 * 1024]
+        end
+        # Gluster device 1GiB
+        p.customize [
+          'storageattach', :id,
+          '--storagectl', 'SCSI',
+          '--port', 2,
+          '--device', 0,
+          '--type', 'hdd',
+          '--medium', vdisk]
+      end
+
+      config.vm.provision "shell", inline: <<-SHELL
+         export DEBIAN_FRONTEND=noninteractive 
+         apt-get update && apt-get install -yq python-software-properties
+         add-apt-repository ppa:gluster/glusterfs-#{glusterfs_version}
+         apt-get update && apt-get install -yq glusterfs-server thin-provisioning-tools
+         cp /vagrant/ssh/id_rsa.pub /root/.ssh/authorized_keys
+      SHELL
+    end
+  end
+
+  # heketi
+  config.vm.define vm_name = "heketi" do |config|
+    config.cache.scope = :box
+    config.vm.hostname = vm_name
+    ip = "192.168.1.60"
+    config.vm.network :public_network, ip: ip, bridge: "en0: Ethernet"
+
+    config.vm.provision "shell", inline: <<-SHELL
+
+      export DEBIAN_FRONTEND=noninteractive  
+      apt-get update && apt-get install -yq python-software-properties
+      add-apt-repository ppa:gluster/glusterfs-#{glusterfs_version}
+      apt-get update && apt-get install -yq glusterfs-client
+
+      cp /vagrant/ssh/id_rsa /root/.ssh/id_rsa
+      cp /vagrant/ssh/id_rsa /home/ubuntu/.ssh/id_rsa
+      chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+      ssh -o 'StrictHostKeyChecking no' root@192.168.1.61 hostname
+      ssh -o 'StrictHostKeyChecking no' root@192.168.1.62 hostname
+      ssh -o 'StrictHostKeyChecking no' root@192.168.1.63 hostname
+      wget https://github.com/heketi/heketi/releases/download/1.0.1/heketi-1.0.1.linux.amd64.tar.gz
+      tar xzvf heketi-1.0.1.linux.amd64.tar.gz
+      cp /vagrant/heketi/heketi.json /home/ubuntu/heketi/heketi.json
+      # cd heketi
+      # nohup ./heketi -config heketi.json &
+      
+    SHELL
+  end
+end

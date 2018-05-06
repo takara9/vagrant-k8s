@@ -1,0 +1,189 @@
+
+
+
+# ネームスペースの作成 namespace.yaml
+
+namespace: ingress-nginx を作成します。
+
+YAMLの適用
+~~~
+$ kubectl apply -f namespace.yaml
+~~~
+
+
+確認
+$ kubectl get ns
+NAME                 STATUS    AGE
+default              Active    10d
+ingress-controller   Active    1d
+ingress-nginx        Active    7s 　　　<--- 作成されたネームスペース
+kube-public          Active    10d
+kube-system          Active    10d
+
+
+
+
+# ダミーのアプリケーションのデプロイ hello-world.yaml
+
+Hello World を表示するデプロイメントとサービスを作成します。
+
+デプロイメント名 hello-world-deployment
+サービス名 hello-world-svc
+タイプ NodePort
+
+サービスのNodePortタイプで、CLUSTER-IP と ノードポート 31445 を開きます。
+
+~~~
+$ kubectl apply -f hello-world.yaml
+~~~
+
+~~~
+$ kubectl get svc -n ingress-nginx
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+hello-world-svc        NodePort       10.244.245.180   <none>          8080:31441/TCP               7h
+~~~
+
+
+
+# コンフィグマップへの作成 configmap.yaml
+
+以下３つのコンフィグマップを作成
+
+nginx-configuration
+tcp-services
+udp-services
+
+注意: コンフィグマップの使い方は、補足しないといけない。
+
+~~~
+$ kubectl apply -f configmap.yaml
+configmap "nginx-configuration" unchanged
+configmap "tcp-services" unchanged
+configmap "udp-services" unchanged
+
+$ kubectl get configmap
+No resources found.
+
+$ kubectl get configmap -n ingress-nginx
+NAME                              DATA      AGE
+ingress-controller-leader-nginx   0         8h
+nginx-configuration               0         8h
+tcp-services                      0         8h
+udp-services                      0         8h
+~~~
+
+
+
+# デフォルトバックエンドの作成 default-backend.yaml
+
+デプロイメント default-http-backend、サービス default-http-backend を作成します。
+
+~~~
+kubectl apply -f default-backend.yaml
+~~~
+
+~~~
+$ kubectl get deploy -n ingress-nginx
+NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+default-http-backend       1         1         1            1           8h
+
+$ kubectl get svc -n ingress-nginx
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)  AGE
+default-http-backend   ClusterIP      10.244.28.14     <none>        80/TCP   8h
+~~~
+
+
+# RBACの設定 rbac.yaml
+
+ロールベース・アクセスコントロールの設定
+
+~~~
+kubectl apply -f rbac.yaml
+~~~
+
+
+
+
+# Ingressコントローラの設定
+
+Ingressコントローラのオプションで、以下を指定すると、バインドされたアドレスを受け入れる
+
+- --publish-service=$(POD_NAMESPACE)/nginx-ingress-svc
+
+
+~~~
+kubectl apply -f ingress-controller-with-rbac.yaml
+~~~
+
+
+以下の設定だと、NodePortの範囲ではなく、ExternalIPのバインドされたポートを開くんだね。
+
+~~~
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-svc
+  namespace: ingress-nginx 
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  - name: https
+    port: 443
+    targetPort: https
+  selector:
+    app: ingress-nginx
+  externalIPs:
+    - 192.168.1.100
+~~~
+
+
+
+# Ingressの設定
+
+kubectl apply -f ingress.yaml
+
+
+~~~
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hello-world-ingress
+  namespace: ingress-nginx   
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: api.sample.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hello-world-svc
+          servicePort: 8080
+~~~
+
+
+https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/PREREQUISITES.md#tls-certificatesvagrant@k8s1:/vagrant/yaml/ingress-nginx$ kubectl get secret -n ingress-nginx
+NAME                                       TYPE                                  DATA      AGE
+default-token-68rqv                        kubernetes.io/service-account-token   3         11h
+nginx-ingress-serviceaccount-token-9899m   kubernetes.io/service-account-token   3         11h
+vagrant@k8s1:/vagrant/yaml/ingress-nginx$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=nginxsvc/O=nginxsvc"
+Generating a 2048 bit RSA private key
+..+++
+.........................+++
+writing new private key to 'tls.key'
+-----
+
+$ kubectl create secret tls tls-secret --key tls.key --cert tls.crt -n ingress-nginx
+secret "tls-secret" created
+
+$ kubectl get secret -n ingress-nginx
+NAME                                       TYPE                                  DATA      AGE
+default-token-68rqv                        kubernetes.io/service-account-token   3         11h
+nginx-ingress-serviceaccount-token-9899m   kubernetes.io/service-account-token   3         11h
+tls-secret                                 kubernetes.io/tls                     2         14s
+
+
+

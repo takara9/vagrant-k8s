@@ -1,0 +1,35 @@
+# coding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # ルータ設定
+  config.vm.define "rt-1" do |router|
+    router.vm.box = "higebu/vyos"
+    router.vm.network "public_network", bridge: "en0: Ethernet", ip: "192.168.1.200"
+    router.vm.network "private_network",
+                       ip: "172.16.7.1",
+                       netmask: "255.255.255.0",
+                       auto_config: true,
+                       virtualbox__intnet: "k8s-net"
+    router.vm.network "private_network",
+                       ip: "172.16.9.1",
+                       netmask: "255.255.255.0",
+                       auto_config: true,
+                       virtualbox__intnet: "c-net"
+  end
+  config.vm.provider "virtualbox" do |v|
+    v.customize ["modifyvm", :id, "--ostype", "Debian_64"]
+    v.cpus = 1
+    v.memory = 512
+  end
+  config.vm.host_name = "rt-1"
+  config.ssh.insert_key = false
+
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
+end
+
+

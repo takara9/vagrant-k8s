@@ -1,0 +1,81 @@
+# coding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # k8sクラスタ設定
+  (0..3).each do |i|
+    config.vm.define "node#{i}" do |server|
+      server.vm.box = "ubuntu/xenial64"
+      server.vm.hostname = "node#{i}"
+      private_ip = "172.16.7.#{i+10}"
+      server.vm.network "private_network",
+                   ip: private_ip,
+                   netmask: "255.255.255.0",
+                   auto_config: true,
+                   virtualbox__intnet: "k8s-net"
+
+      server.vm.provider "virtualbox" do |v|
+        if i == 0 then
+          v.memory = 2048
+        else
+          v.memory = 1024
+        end
+        v.cpus = 1
+        v.gui = false
+      end
+      server.vm.provision "shell", inline: <<-EOF1
+      apt-get update                                                                              
+      apt-get install -y curl                                                                     
+
+      #
+      # 
+      route add -net 172.16.9.0/24 gw 172.16.7.1
+cat <<EOF3 > /etc/rc.local
+#!/bin/sh -e
+#
+route add -net 172.16.9.0/24 gw 172.16.7.1
+
+exit 0
+EOF3
+chmod 0755 /etc/rc.local
+
+      # for kube-proxy (iptables)
+      #
+      echo net.bridge.bridge-nf-call-iptables = 1 >> /etc/sysctl.conf
+      sysctl -p
+
+      # install tools
+      #
+      apt-get update
+      apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+      # configure a repository for Docker-CE
+      #
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+      # configure a repository for kubernetes
+      #
+      cat <<EOF2 >/etc/apt/sources.list.d/kubernetes.list
+      deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF2
+      # install Docker-CE
+      #
+      apt-get update
+      apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
+      # install Kubernetes (standard)
+      # 
+      #apt-get install -y kubelet=1.9.6-00 kubeadm=1.9.6-00 kubectl=1.9.6-00
+      apt-get install -y kubelet kubeadm kubectl
+EOF1
+    end
+  end
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
+end
+
+

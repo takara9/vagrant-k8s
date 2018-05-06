@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "host-1" do |server|
+    server.vm.box = "ubuntu/xenial64"
+
+    server.vm.network "private_network",
+                      ip: "172.16.9.11",
+                      netmask: "255.255.255.0",
+                      auto_config: true,
+                      virtualbox__intnet: "c-net"
+    
+  end
+  config.vm.provider "virtualbox" do |v|
+    v.cpus = 1
+    v.memory = 512
+    v.gui = false
+  end
+  config.vm.host_name = "host-1"
+  config.vm.provision "shell", inline: <<-EOF
+  apt-get update
+  apt-get install -y curl
+
+  route add -net 172.16.7.0/24 gw 172.16.9.1
+  cat <<EOF3 > /etc/rc.local
+#!/bin/sh -e
+#
+route add -net 172.16.7.0/24 gw 172.16.9.1
+
+exit 0
+EOF3
+chmod 0755 /etc/rc.local
+
+EOF
+end
+
+
