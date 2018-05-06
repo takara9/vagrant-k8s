@@ -19,7 +19,8 @@ Vagrant.configure(2) do |config|
         if i == 1 then
           v.memory = 2048
         else
-          v.memory = 1024
+          #v.memory = 1024
+          v.memory = 2048
         end
       end
 

@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  namespace: kube-system
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      volumes:
+      - name: data-volume
+        emptyDir: {}
+      - name: log-volume
+        emptyDir: {}
+      containers:
+      - image: elastic/elasticsearch:6.2.4
+        name: elasticsearch-dev
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: data-volume
+          mountPath: /var/lib/elasticsearch
+        - name: log-volume
+          mountPath: /var/log/elasticsearch
+        env:
+          - name: discovery.type
+            value: "single-node"
+          - name: http.host
+            value: "0.0.0.0"
+          - name: transport.host
+            value: "127.0.0.1"
+          - name: xpack.security.enabled
+            value: "false"
+          - name: xpack.monitoring.enabled
+            value: "false"
+          - name: xpack.watcher.enabled
+            value: "false"
+          - name: xpack.graph.enabled
+            value: "false"
+          - name: xpack.ml.enabled
+            value: "false"
+          - name: path.data
+            value: "/var/lib/elasticsearch"
+          - name: path.logs
+            value: "/var/log/elasticsearch"
+          - name: ES_JAVA_OPTS
+            value: "-Xms512m -Xmx512m"
+        ports:
+        - name: endpoint
+          containerPort: 9200
+        - name: endpoint-ssl
+          containerPort: 9300
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: kube-system
+  labels:
+    app: elasticsearch
+spec:
+  type: NodePort
+  ports: 
+    - name: port1
+      port: 9200
+      nodePort: 31200
+    - name: port2
+      port: 9300
+      nodePort: 31300
+  selector:
+    app: elasticsearch

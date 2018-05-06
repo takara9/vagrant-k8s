@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: kube-system
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - image: elastic/kibana:6.2.4
+        name: kibana
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ELASTICSEARCH_URL
+            value: "http://elasticsearch:9200"
+          - name: xpack.graph.enabled
+            value: "false"
+          - name: xpack.security.enabled
+            value: "false"
+          - name: xpack.ml.enabled
+            value: "false"
+        ports:
+          - containerPort: 5601
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: kube-system
+  labels:
+    app: kibana
+spec:
+  type: NodePort
+  ports: 
+    - port: 5601
+      nodePort: 31601
+  selector:
+    app: kibana
