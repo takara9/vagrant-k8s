@@ -9,6 +9,14 @@ A node needs to install the nfs client package, because of Docker container depe
 ~~~
 
 
+# Start Virutal Server
+
+~~~
+$ cd vagrant
+$ vagrant up
+~~~
+
+
 # Setup
 
 ~~~
