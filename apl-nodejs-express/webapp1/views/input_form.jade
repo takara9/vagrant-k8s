@@ -1,0 +1,50 @@
+extends layout
+block body
+  if expressFlash.length > 0
+    p <strong>メッセージ: </strong> #{expressFlash}
+
+  form(method='post', action="#{action}")
+    fieldset
+      legend #{title}
+      table(class="table5",border="1")
+        th 項目
+        th インプットフィールド
+        tr 
+         td 
+           label(for='todoufuken') 都道府県 
+         td 
+           input(type="text", name='todoufuken', value="#{field.todoufuken}")
+        tr
+         td 
+           label(for='todoufuken_kana') 都道府県カナ 
+         td 
+           input(type="text", name='todoufuken_kana', value="#{field.todoufuken_kana}")
+        tr
+         td 
+           label(for='sicyoson') 市町村 
+         td 
+           input(type="text", name='sicyoson', value="#{field.sicyoson}")
+        tr
+         td 
+           label(for='sicyoson_kana') 市町村カナ
+         td 
+           input(type="text", name='sicyoson_kana', value="#{field.sicyoson_kana}")
+        tr
+         td 
+           label(for='jusho_CD') 住所コード
+         td 
+           input(type="text", name='jusho_CD', value="#{field.jusho_CD}")
+        tr
+         td 
+           label(for='zip_code') 郵便番号
+         td 
+           input(type="text", name='zip_code', value="#{field.zip_code}")
+        tr
+         td 
+           label(for='todoufuken_CD') 都道府県コード
+         td 
+           input(type="text", name='todoufuken_CD', value="#{field.todoufuken_CD}")
+
+      input(type='submit')
+
+

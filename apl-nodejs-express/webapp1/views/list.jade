@@ -1,0 +1,73 @@
+//
+//
+//  JADE ページ送り付きリストの表示
+//
+//  Node.js の Expressフレームワークは、REST APIに対応したアプリが書ける
+//  フレームワークであるが、HTMLフォームの操作までをREST対応として、
+//  PUT, DELETE を利用しようとすると、フロントエンド側のコードが複雑化してしまう。
+//
+//  RESTではPOST:作成/GET:取得/PUT:更新/DELETE:削除となっているが、
+//  本来のRESTの思想は単純化や疎結合化のツールであることを鑑みてHTMLフォームを利用する
+//  HTML及びJavaScriptでは、GETとPOST以外のメソッドを利用しない。
+//
+//  もちろん、HTMLフォーム以外からコールする場合は、RESTの動詞メソッドに準ずるものとする
+//
+
+extends layout
+block body
+  script.
+    var postForm = function(url, data) {
+      var $form = $('<form/>', {'action': url, 'method': 'post'});
+      for(var key in data) {
+        $form.append($('<input/>', {'type': 'hidden', 'name': key, 'value': data[key]}));
+      }
+      $form.appendTo(document.body);
+      $form.submit();
+    };
+
+    $(function() {
+      $('#rollup').on('click',function(){
+        location.href="/move?prev=20";	
+      });
+      $('#rolldown').on('click',function(){
+        location.href="/move?next=20";	
+      });
+    });
+
+    function edit(key){
+        var data = {'jcd': key };
+        postForm('/edit', data);
+    }     
+
+    function del(key){
+        var data = {'jcd': key };
+        postForm('/edit/delete', data);
+    }     
+
+  #content
+  button#rollup() 前ページ
+  button#rolldown() 次ページ
+  開始列 #{start} 
+  表示行 数#{rows} 
+  table(class="table5",border="1")
+   th 住所コード
+   th 都道府県
+   th 市町村
+   th 都道府県カナ
+   th 市町村カナ
+   th 郵便番号
+   th 都道府県コード
+   th アクション
+   - for (i=0; i < rec_data.length; i++)
+    tr
+     td 
+       a(href="/detail?jcd=#{rec_data[i].jusho_CD}") #{rec_data[i].jusho_CD} 
+     td #{rec_data[i].todoufuken} 
+     td #{rec_data[i].sicyoson} 
+     td #{rec_data[i].todoufuken_kana} 
+     td #{rec_data[i].sicyoson_kana} 
+     td #{rec_data[i].zip_code} 
+     td #{rec_data[i].todoufuken_CD} 
+     td 
+        input(type='button', value="編集", onclick="edit(#{rec_data[i].jusho_CD});")
+        input(type='button', value="削除", onclick="del(#{rec_data[i].jusho_CD});")

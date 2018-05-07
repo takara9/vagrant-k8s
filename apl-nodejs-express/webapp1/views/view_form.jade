@@ -1,0 +1,31 @@
+extends layout
+block body
+  if expressFlash.length > 0
+    p <strong>メッセージ: </strong> #{expressFlash}
+
+    fieldset
+      legend #{title}
+      table(class="table5",border="1")
+        th 項目
+        th 値
+        tr 
+         td 都道府県 
+         td #{field.todoufuken}
+        tr
+         td 都道府県カナ 
+         td #{field.todoufuken_kana}
+        tr
+         td 市町村 
+         td #{field.sicyoson}
+        tr
+         td 市町村カナ
+         td #{field.sicyoson_kana}
+        tr
+         td 住所コード
+         td #{field.jusho_CD}
+        tr
+         td 郵便番号
+         td #{field.zip_code}
+        tr
+         td 都道府県コード
+         td #{field.todoufuken_CD}

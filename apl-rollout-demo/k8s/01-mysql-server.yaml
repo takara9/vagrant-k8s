@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-server
+    spec:
+      containers:
+      - name: mysql
+        #image: mysql/mysql-server:5.7
+        image: maho/mysql:v1
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: test
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_USER
+          value: dev
+        - name: MYSQL_PASSWORD
+          value: dev
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: data-vol
+      volumes:
+      - name: data-vol
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql-server
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306
+

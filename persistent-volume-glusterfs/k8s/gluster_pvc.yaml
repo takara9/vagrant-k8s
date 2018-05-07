@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: gluster-pvc
+ # annotations:
+ #  volume.beta.kubernetes.io/storage-class: ""
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 8Gi
+ selector:
+   matchLabels:
+     name: takara

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="description" content=".click() - クリックイベントのサンプル／デモでーす。">
+<title>.click() - クリックイベント - jQuery入門</title>
+<script src='/javascripts/jquery-3.2.1.js'></script>
+</head>
+<body>
+
+<a href="#">Click Me!</a>
+<br /><br />
+<div id="click-event">
+  ここをクリックすると…  
+</div>
+
+<script>
+$("a").click(function(){
+  alert("aタグ .click() のイベントだよぉ〜！");
+});
+$("#click-event").click(function(){
+  $(this).slideUp();
+});
+
+$('#rollup').on('click',function(){
+   alert("up");
+   console.log("CLICK UP");
+});
+
+$('#rolldown').on('click',function(){
+   alert("down");
+   console.log("CLICK DOWN");
+});
+
+</script>
+<input id="rollup" type="button" value="UP"/>
+<input id="rolldown" type="button" value="DOWN"/>
+<hr>
+<button id="rollup">UP</button>
+<button id="rolldown">DOWN</button>
+
+</body>
+</html>

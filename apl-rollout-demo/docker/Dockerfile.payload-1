@@ -1,0 +1,9 @@
+#
+# コンテンツをポッドの共有ボリュームへ置くための
+# コンテンツ運び屋コンテナ
+#
+FROM ubuntu:latest
+
+copy ./data/www-1 /payload
+
+WORKDIR /payload

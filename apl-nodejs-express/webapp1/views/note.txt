@@ -1,0 +1,45 @@
+  script.
+    var postForm = function(url, data) {
+      var $form = $('<form/>', {'action': url, 'method': 'post'});
+      for(var key in data) {
+        $form.append($('<input/>', {'type': 'hidden', 'name': key, 'value': data[key]}));
+      }
+      $form.appendTo(document.body);
+      $form.submit();
+    };
+    $(function() {
+      $('#rollup').on('click',function(){
+        location.href="/move?prev=20";	
+      });
+      $('#rolldown').on('click',function(){
+        location.href="/move?next=20";	
+      });
+
+      $('#detail').on('click',function(x){
+        console.log("detail = ", $('#detail'));
+        var data = {'name': '詳細表示', 'text': x };
+        postForm('/detail', data);
+      });
+      $('#edit').on('click',function(x){
+        console.log("edit = ", $('#edit'));
+        var data = {'name': '編集', 'text': x };
+        postForm('/edit', data);
+      });
+      $('#delete').on('click',function(x){
+        console.log("del = ", $('#delete'));
+        var data = {'name': '削除', 'text': x };
+        postForm('/delete', data);
+      });
+
+    });
+
+
+        form(method='post', action='/detail')
+          input(type='hidden', name='jusho_cd', value="#{rec_data[i].jusho_CD}") 
+          input(type='submit', value="詳細", name="detail")
+        form(method='post', action='/edit')
+          input(type='hidden', name='jusho_cd', value="#{rec_data[i].jusho_CD}") 
+          input(type='submit', value="編集", name="edit")
+        form(method='post', action='/delete')
+          input(type='hidden', name='jusho_cd', value="#{rec_data[i].jusho_CD}") 
+          input(type='submit', value="削除", name="delete")

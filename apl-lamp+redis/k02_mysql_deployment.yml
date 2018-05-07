@@ -1,0 +1,57 @@
+#
+# MySQLサーバー
+# subPathを利用して一つの永続ストレージに２つマウントする
+#
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql-deploy
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mini-mysql
+        tier: backend
+        track: stable
+    spec:
+      containers:
+      - name: mysql	
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: "mysql"
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root"
+        - name: MYSQL_USER
+          value: "dev"
+        - name: MYSQL_PASSWORD
+          value: "dev"
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-disk1
+          subPath: mysql-data
+        - mountPath: /docker-entrypoint-initdb.d
+          name: mysql-disk1
+          subPath: initdb
+      volumes:
+      - name: mysql-disk1
+        persistentVolumeClaim:
+          claimName: mysql-claim1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mini-mysql
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306

@@ -1,0 +1,22 @@
+doctype html
+html(lang="ja")
+  head
+    meta(charset="utf-8")
+    meta(name='description', content='ファイルのディスクリプションが入ります')
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='icon', href='/images/favicon.ico')
+    script(src='/javascripts/jquery-3.2.1.js')
+    script.
+        $(function(){
+            $('#menu li').hover(function(){
+                $("ul:not(:animated)", this).slideDown();
+            }, function(){
+                $("ul.child",this).slideUp();
+            });
+        });
+  body
+    include header_menu
+    h1 #{title}
+    block body
+    include footer

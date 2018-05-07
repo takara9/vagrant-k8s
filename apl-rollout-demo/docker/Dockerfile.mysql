@@ -1,0 +1,17 @@
+#
+#  MySQL Server
+#
+FROM mysql:5.7
+
+RUN apt-get update \
+    && apt-get install -y vim curl git
+
+ADD ./data/mysql_init /docker-entrypoint-initdb.d
+ENV MYSQL_DATABASE test
+ENV MYSQL_ROOT_PASSWORD root
+ENV MYSQL_USER dev
+ENV MYSQL_PASSWORD dev
+
+EXPOSE 3306
+
+WORKDIR /tmp

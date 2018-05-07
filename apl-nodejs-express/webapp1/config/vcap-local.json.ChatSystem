@@ -1,0 +1,37 @@
+{
+ "services": {
+   "cloudantNoSQLDB": [
+     {
+       "credentials": {
+         "username": "b5c59b15-043d-4e32-93b3-52b1ce985a93-bluemix",
+         "password": "05106297a6dcc5981ae9d6da732a6bc397401ee02c067e9a11c32dad92ee8b42",
+         "host": "b5c59b15-043d-4e32-93b3-52b1ce985a93-bluemix.cloudant.com",
+         "port": 443,
+         "url": "https://b5c59b15-043d-4e32-93b3-52b1ce985a93-bluemix:05106297a6dcc5981ae9d6da732a6bc397401ee02c067e9a11c32dad92ee8b42@b5c59b15-043d-4e32-93b3-52b1ce985a93-bluemix.cloudant.com"
+       },
+       "name": "Cloudant NoSQL DB-j9",
+       "label": "cloudantNoSQLDB"
+     }
+   ],
+   "natural_language_classifier": [
+     {
+       "credentials": {
+         "url": "https://gateway.watsonplatform.net/natural-language-classifier/api",
+         "username": "c2bf1032-dece-4850-9823-383f25b1076a",
+         "password": "bho4soS6ZP3x",
+         "version": "v1"
+       },
+       "syslog_drain_url": null,
+       "label": "natural_language_classifier",
+       "provider": null,
+       "plan": "standard",
+       "name": "Natural Language Classifier-mr",
+       "tags": [
+         "watson",
+         "ibm_created",
+         "ibm_dedicated_public"
+       ]
+     }
+   ]
+ }
+}

@@ -1,0 +1,4 @@
+FROM nginx:latest
+ADD ./nginx_conf/proxy-cache.conf /etc/nginx/conf.d/default.conf
+ADD ./nginx_conf/nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY ./webapp1/public /usr/share/nginx/html

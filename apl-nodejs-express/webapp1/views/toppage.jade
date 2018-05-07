@@ -1,0 +1,21 @@
+extends layout
+block body
+  #img
+      p アイキャッチの画像
+      img(src="/images/plant.png")
+
+  #guide
+    fieldset
+      legend ガイド
+
+      p このページが、ログイン直後に表示されるトップページです。
+        データベースをアクセスして、リスト表示、内容表示、編集、追加、削除をするフレーム
+        ワークを目指します。フレームワークは、対象とするデータベースのアクセスツールとし
+        ての機能を提供します。
+
+      p Bluemix の CFコンテナ、および、Dockerコンテナとして、実行できる様にします。
+        また、K8sで実行できる様に、クラスタ化対応を実施します。
+
+      p Compose mongodb, Cloudant, MySQL等のアクセスのサンプルを提供します。
+
+

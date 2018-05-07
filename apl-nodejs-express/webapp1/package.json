@@ -1,0 +1,28 @@
+{
+  "name": "myapp1",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cfenv": "^1.0.4",
+    "cloudant": "^1.8.0",
+    "connect-cloudant-store": "^0.1.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "express-flash": "0.0.2",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.3",
+    "express-stylus": "^0.1.0",
+    "fast-csv": "^2.4.0",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "nib": "^1.1.2",
+    "serve-favicon": "~2.4.2",
+    "sleep": "^5.1.1",
+    "stylus": "0.54.5"
+  }
+}

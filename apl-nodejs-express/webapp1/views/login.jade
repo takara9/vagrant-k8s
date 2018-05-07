@@ -1,0 +1,21 @@
+extend layout_login
+
+block body
+  h1 #{title}
+
+  p ログインしてください
+    form(method='post', action='/login')
+      fieldset
+        legend ログイン
+        p
+          label(for='name') ユーザー名：
+          input(name='name')
+        p
+          label(for='pwd') パスワード：
+          input(type='password', name='pwd')
+        input(type='submit')
+
+    if expressFlash.length > 0
+      p <strong>エラーメッセージ:</strong> #{ expressFlash }
+
+

@@ -1,0 +1,133 @@
+
+==== サンプル・アプリ ====
+
+CloudantのCRUD + FINDの機能を実行するサンプルアプリを準備する
+
+現在接続しているものと異なるvcap-local.jsonを準備
+
+データベースの作成用とデータロード用のバッチ処理を準備
+最終的に、起動時にバッチ処理でデータベースを再作成して、データをロードする
+
+
+
+
+
+
+
+====================================================
+
+===== nginx と express の連携 =====
+
+nginx を リバース・プロキシーとして利用
+
+nginx のコンフィグファイルは、Dockerfile側に設定して、コンテナ化する
+それで、コンテンツは、Node側だけに集めて、やってやってみるかね。
+
+
+
+リバースプロキシー
+https://qiita.com/ogwmtnr/items/03996d3798facbc600da
+
+~~~file:/etc/nginx/conf.d/node-app.conf
+
+upstream node-sampleapp {
+    server localhost:3000;
+}
+
+server {
+    listen       80;
+    server_name  10.211.55.2;
+    proxy_redirect                          off;
+    proxy_set_header Host                   $host;
+    proxy_set_header X-Real-IP              $remote_addr;
+    proxy_set_header X-Forwarded-Host       $host;
+    proxy_set_header X-Forwarded-Server     $host;
+    proxy_set_header X-Forwarded-For        $proxy_add_x_forwarded_for;
+    location / {
+        proxy_pass http://node-sampleapp/;
+    }
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {  
+    root   /usr/share/nginx/html;
+    }
+}
+~~~
+
+
+
+プロキシーキャッシュ
+https://qiita.com/aosho235/items/bb1276a8c43e41edfc6f
+
+~~~
+events {
+    worker_connections 1024;
+}
+
+http {
+    # proxy_cache_pathとproxy_temp_pathは同じファイルシステム上に配置するのがパフォーマンス上よい
+    # keys_zoneの1mは共有メモリのサイズ。1MiBあたり約8000個のキーを保持できるので、それほど大きくなくて良い
+    # max_sizeは全キャッシュファイルのサイズ合計の上限
+    # inactiveで指定した期間内にアクセスされなかったキャッシュファイルは、その有効期間に関わらず削除される（デフォルトで10分）
+
+    proxy_cache_path /var/cache/nginx keys_zone=zone1:1m max_size=1g inactive=24h;
+    proxy_temp_path  /var/cache/nginx_tmp;
+
+    # オリジンから来るCache-Controlを無視する
+    #proxy_ignore_headers Cache-Control;
+
+    server {
+        server_name _;
+        listen 80;
+        root /srv/http/;
+
+        location ^~ /sinatra/ {
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Host $http_host;
+            proxy_pass http://localhost:9292/;
+            proxy_cache zone1;
+            #proxy_cache_valid 200 302 3s;
+            # レスポンスヘッダにキャッシュヒットしたかどうかを含める
+            add_header X-Nginx-Cache $upstream_cache_status;
+        }   
+
+    }   
+}
+~~~
+
+
+nginxでリバースプロキシキャッシュして、キャッシュを削除する機能を付ける
+https://qiita.com/zaru/items/c41072e29b9550c2e6a8
+
+
+~~~file:nginx.conf
+
+http {
+
+    proxy_cache_path /var/cache/nginx/cache levels=1:2 keys_zone=zone1:4m inactive=7d max_size=50m;
+    proxy_temp_path /var/cache/nginx/tmp;
+
+}
+~~~
+
+~~~file:server.conf
+server {
+
+    proxy_redirect   off;
+    proxy_set_header Host               $host;
+    proxy_set_header X-Real-IP          $remote_addr;
+    proxy_set_header X-Forwarded-Host   $host;
+    proxy_set_header X-Forwarded-Server $host;
+    proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+
+    proxy_ignore_headers Cache-Control;
+    proxy_cache zone1;
+    proxy_cache_key $uri;
+    proxy_cache_valid 200 302 1m;
+    proxy_cache_valid 404 10m;
+
+    location / {
+        proxy_pass https://example.com;
+    }
+}
+~~~

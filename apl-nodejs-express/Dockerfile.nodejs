@@ -1,0 +1,8 @@
+FROM ubuntu:latest
+RUN apt-get update && apt-get install curl -y
+RUN curl -sL https://deb.nodesource.com/setup_6.x | /bin/bash -
+RUN apt-get install nodejs -y
+ADD /webapp1 /webapp1
+ENV NODE_ENV development
+EXPOSE 3000
+CMD ["node", "/webapp1/bin/www"]

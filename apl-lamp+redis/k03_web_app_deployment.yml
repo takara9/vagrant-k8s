@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: mini
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend-deploy
+
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mini
+        tier: frontend
+        track: stable
+
+    spec:
+      containers:
+
+      - name: app
+        image: registry.ng.bluemix.net/takara/app:v1
+        env:
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          value: root
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www
+          name: www-vol
+          subPath: www
+
+      - name: web
+        image: registry.ng.bluemix.net/takara/web:v2
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www
+          name: www-vol
+          subPath: www
+
+      restartPolicy: Always
+
+      volumes:
+      - name: www-vol
+        persistentVolumeClaim:
+          claimName: mysql-claim1
+

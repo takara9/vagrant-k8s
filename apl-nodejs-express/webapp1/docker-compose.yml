@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    proxy_cache:
+        build:
+            context: .
+            dockerfile: Dockerfile.nginx
+        ports:
+            - "4040:80"
+        depends_on:
+            - node_app
+    node_app:
+        build:
+            context: .
+            dockerfile: Dockerfile.nodejs
+        ports:
+            - "3000:3000"

@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: hostpath1
+  labels:
+    type: local
+    name: hostpath1
+spec:
+  capacity:
+    storage: 300Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/tmp/hostpath-vol-1"
+    type: DirectoryOrCreate

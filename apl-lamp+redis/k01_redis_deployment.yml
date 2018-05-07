@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-deploy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mini-redis
+        tier: backend
+        track: stable
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+          - name: redis
+            containerPort: 6379
+          command: ["redis-server"]
+          args: ["--appendonly", "yes"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: mini-redis
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 6379
+    targetPort: 6379
+

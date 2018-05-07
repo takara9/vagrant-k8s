@@ -1,0 +1,15 @@
+{
+  "name": "db_setup_tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "create_db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cfenv": "^1.0.4",
+    "cloudant": "^1.8.0"
+  }
+}

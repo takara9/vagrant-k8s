@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$(function(){
+    $('#menu li').hover(function(){
+        $("ul:not(:animated)", this).slideDown();
+    }, function(){
+        $("ul.child",this).slideUp();
+    });
+});
+</script>
+<link rel="stylesheet" href="/stylesheets/dropdown.css">
+
+</head>
+<body>
+<ul id="menu">
+        <li>トップ</li>
+        <li>ニュース
+        <ul class="child">
+            <li><a href="#">プレスリリース</a></li>
+            <li><a href="#">お知らせ</a></li>
+        </ul>
+    </li>
+    <li>採用情報
+        <ul class="child">
+            <li><a href="#">新卒採用</a></li>
+            <li><a href="#">中途採用</a></li>
+        </ul>
+    </li>
+    <li class="menu">会社案内
+        <ul class="child">
+              <li><a href="#">会社概要</a></li>
+              <li><a href="#">沿革</a></li>
+              <li><a href="#">アクセスマップ</a></li>
+        </ul>
+    </li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,12 @@
+applications:
+- path: .
+  memory: 128M
+  instances: 1
+  domain: mybluemix.net
+  name: facebook-chatbot
+  host: fb-tkr
+  disk_quota: 1024M
+services:
+- cloudant
+- Natural Language Classifier-r9
+- Conversation-k7
