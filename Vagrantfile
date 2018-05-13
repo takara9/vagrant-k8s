@@ -48,6 +48,7 @@ EOF2
 # install Docker-CE
 apt-get update
 apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
+usermod -aG docker vagrant
 
 #
 # install Kubernetes
