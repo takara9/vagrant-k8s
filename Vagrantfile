@@ -8,19 +8,23 @@ Vagrant.configure(2) do |config|
       s.vm.box = "ubuntu/xenial64"
       s.vm.hostname = "node-#{i}"
 
-      public_ip = "192.168.1.#{i+90}"
-      s.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
-      if i == 1 then
-        s.vm.network :forwarded_port, host: 8001, guest: 8001
-      end
+      #public_ip = "192.168.1.#{i+90}"
+      #s.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
+      #if i == 1 then
+      #  s.vm.network :forwarded_port, host: 8001, guest: 8001
+      #end
+
+      private_ip = "172.16.20.#{i+10}"
+      s.vm.network "private_network", ip: private_ip
+      
       s.vm.provider "virtualbox" do |v|
         v.cpus = 1
         v.gui = false        
         if i == 1 then
           v.memory = 2048
         else
-          #v.memory = 1024
-          v.memory = 2048
+          v.memory = 1024
+          #v.memory = 2048
         end
       end
 

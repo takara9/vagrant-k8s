@@ -41,7 +41,7 @@ Switch root user, and edit a configuration file for kubeadmin.
 Replace following line in 10-kubeadm.conf
 
 ~~~10-kubeadm.conf
-Environment="KUBELET_DNS_ARGS=--cluster-dns=10.244.0.10 --cluster-domain=cluster.local --node-ip=192.168.1.91"
+Environment="KUBELET_DNS_ARGS=--cluster-dns=10.244.0.10 --cluster-domain=cluster.local --node-ip=172.16.20.11"
 ~~~
 
 after save file edited, restart kubelet by following command.
@@ -54,7 +54,7 @@ after save file edited, restart kubelet by following command.
 Do initalaize master node by kubeadm init with following options.
 
 ~~~
-# kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.1.91 --service-cidr=10.244.0.0/16
+# kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.16.20.11 --service-cidr=10.244.0.0/16
 ~~~
 
 check output message of "kubeadm init", and should note thase text on the Memopad.
@@ -75,7 +75,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.1.91:6443 --token tl1h2f.5juylkrnfi39nzs0 --discovery-token-ca-cert-hash sha256:9715403f839a6aae6bdd4da81da1444b934ef84a936378d756cb3f3df0c2828c
+  kubeadm join 172.16.20.11:6443 --token tl1h2f.5juylkrnfi39nzs0 --discovery-token-ca-cert-hash sha256:9715403f839a6aae6bdd4da81da1444b934ef84a936378d756cb3f3df0c2828c
 ~~~
 
 ## setup the environment of kubectl at the master node
@@ -171,8 +171,16 @@ root@node-2:~# vi /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 Replace following line in 10-kubeadm.conf
 
+for node-2
+
 ~~~
-Environment="KUBELET_DNS_ARGS=--cluster-dns=10.244.0.10 --cluster-domain=cluster.local --node-ip=192.168.1.92"
+Environment="KUBELET_DNS_ARGS=--cluster-dns=10.244.0.10 --cluster-domain=cluster.local --node-ip=172.16.20.12"
+~~~
+
+for node-3
+
+~~~
+Environment="KUBELET_DNS_ARGS=--cluster-dns=10.244.0.10 --cluster-domain=cluster.local --node-ip=172.16.20.13"
 ~~~
 
 Restart kubelet daemon after editing.
@@ -185,7 +193,7 @@ Restart kubelet daemon after editing.
 Execute folloing command to join k8s cluster.
 
 ~~~
-# kubeadm join 192.168.1.91:6443 --token aj37c0.jr90n3yhdtcz9gg0 --discovery-token-ca-cert-hash sha256:6990185a5a7c089a79b3069a7316c1bfb8563a6ad166d6f034851eb08f0fc8e1
+# kubeadm join 172.16.20.11:6443 --token aj37c0.jr90n3yhdtcz9gg0 --discovery-token-ca-cert-hash sha256:6990185a5a7c089a79b3069a7316c1bfb8563a6ad166d6f034851eb08f0fc8e1
 ~~~
 
 
