@@ -12,6 +12,7 @@ spec:
       containers:
       - name: web
         image: maho/webserver:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---
