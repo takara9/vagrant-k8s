@@ -5,7 +5,7 @@ services:
             context: .
             dockerfile: docker/Dockerfile.web
         volumes:
-            - ./data/www-1:/var/www
+            - ./data/www:/var/www
         ports:
             - "8090:80"
         links:
@@ -17,7 +17,7 @@ services:
             context: .
             dockerfile: docker/Dockerfile.app
         volumes:
-            - ./data/www-1:/var/www
+            - ./data/www:/var/www
         environment:
             - DB_USER=root
             - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}

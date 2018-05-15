@@ -4,6 +4,6 @@
 #
 FROM ubuntu:latest
 
-copy ./data/www-1 /payload
+copy ./data/www /payload
 
 WORKDIR /payload
