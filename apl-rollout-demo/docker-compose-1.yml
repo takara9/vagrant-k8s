@@ -7,7 +7,7 @@ services:
         volumes:
             - ./data/www-1:/var/www
         ports:
-            - "4040:80"
+            - "8090:80"
         links:
             - app
         depends_on:
@@ -32,7 +32,7 @@ services:
         image: phpmyadmin/phpmyadmin
         container_name: phpmyadmin
         ports:
-            - "8080:80"
+            - "8095:80"
         environment:
             - PMA_ARBITRARY=1
             - PMA_HOST=${MYSQL_HOST}
@@ -41,7 +41,7 @@ services:
             - mysql
 
     mysql:
-        image: mysql:latest
+        image: mysql:5.7
         container_name: ${MYSQL_HOST}
         restart: always
         env_file:

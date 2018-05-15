@@ -1,7 +1,7 @@
 <?php
-include "mt_framework2.php";
+include "mt_framework.php";
 $fw = new MtF();
-include "header2.php";
+include "header.php";
 ?>
 
 <h1>ログインページ</h1>
@@ -13,7 +13,7 @@ if (isset($_SESSION["userid"])) {
 } else {
 ?>
 
-<form action="do_login2.php" method="post">
+<form action="do_login.php" method="post">
   ユーザーID: <input type="text" name="userid" /><br>
   パスワード: <input type="password" name="passwd" /><br>
 <input type="submit" value="ログイン" /><br>
