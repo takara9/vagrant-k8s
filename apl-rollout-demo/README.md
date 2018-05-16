@@ -163,3 +163,40 @@ maho/node-red       1.0                 1568efbb7fa5        2 months ago        
 ubuntu              <none>              f975c5035748        2 months ago        112MB
 mysql               5.7                 5d4d51c57ea8        2 months ago        374MB
 ~~~
+
+
+## コンテナのタグ付け、DockerHubへのアップロード
+
+
+docker login
+
+docker tag apserver:1.0 maho/apserver:1.0
+docker puth maho/apserver:1.0
+
+docker tag webserver:1.0 maho/webserver:1.0
+docker puth maho/webserver:1.0
+
+docker tag dbserver:1.0 maho/dbserver:1.0
+docker push maho/dbserver:1.0
+
+docker tag contents:1.0 maho/contents:1.0
+docker push maho/contents:1.0
+
+docker tag contents:1.1 maho/contents:1.1
+docker push maho/contents:1.1
+
+
+
+imac:apl-rollout-demo maho$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+dbserver            1.0                 2707bd1b5e67        About an hour ago   463MB
+maho/dbserver       1.0                 2707bd1b5e67        About an hour ago   463MB
+apserver            1.0                 0e3ee49fd74c        About an hour ago   673MB
+maho/apserver       1.0                 0e3ee49fd74c        About an hour ago   673MB
+webserver           1.0                 8a93caaba198        About an hour ago   109MB
+maho/webserver      1.0                 8a93caaba198        About an hour ago   109MB
+contents            1.0                 43fbdaa030d6        2 hours ago         82.3MB
+maho/contents       1.0                 43fbdaa030d6        2 hours ago         82.3MB
+contents            1.1                 eb070c175994        2 hours ago         82.3MB
+maho/contents       1.1                 eb070c175994        2 hours ago         82.3MB
+

@@ -1,18 +1,17 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: mysql-server
+  name: ro-dbserver
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: mysql-server
+        app: ro-dbserver
     spec:
       containers:
       - name: mysql
-        #image: mysql/mysql-server:5.7
-        image: maho/mysql:v1
+        image: maho/dbserver:1.0
         ports:
         - containerPort: 3306
         env:
@@ -37,7 +36,7 @@ metadata:
   name: mysql
 spec:
   selector:
-    app: mysql-server
+    app: ro-dbserver
   ports:
   - protocol: TCP
     port: 3306

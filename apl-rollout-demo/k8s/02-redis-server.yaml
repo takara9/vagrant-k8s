@@ -1,13 +1,13 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: redis
+  name: ro-cache
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: redis
+        app: ro-cache
     spec:
       containers:
       - name: redis
@@ -27,7 +27,7 @@ metadata:
   name: redis
 spec:
   selector:
-    app: redis
+    app: ro-cache
   ports:
   - protocol: TCP
     port: 6379

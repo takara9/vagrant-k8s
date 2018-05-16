@@ -1,19 +1,19 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: web-app
+  name: ro-web-apserver
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        app: web-app
+        app: ro-web-apserver
     spec:
       restartPolicy: Always
       hostname: app
       containers:	     
       - name: web
-        image: maho/web:v1
+        image: maho/webserver:1.0
         ports:
         - containerPort: 80
         resources: {}
@@ -21,7 +21,7 @@ spec:
         - mountPath: /var/www
           name: www-vol
       - name: app
-        image: maho/app:v1
+        image: maho/apserver:1.0
         env:
         - name: DB_USER
           value: root
@@ -33,7 +33,7 @@ spec:
           name: www-vol
       initContainers:
       - name: cp-contents
-        image: maho/web_contents:v1
+        image: maho/contents:1.0
         command: ["cp",  "-r", ".", "/var/www"]
         volumeMounts:
         - mountPath: /var/www
@@ -51,11 +51,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: web-app-np
+  name: ro-web-apserver
 spec:
   type: NodePort
   selector:
-    app: web-app
+    app: ro-web-apserver
   ports:
   - protocol: TCP
     port: 80
