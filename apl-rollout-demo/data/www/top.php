@@ -34,7 +34,7 @@ $rslt = $dao->find_by_userid($_SESSION["userid"]);
 
       
 <tr>
-<td rowspan="4" align="center">
+<td rowspan="3" align="center">
   <img src="/images/<?php print $rslt['photo_file_name']?>" width="180">
 </td>
 
@@ -91,4 +91,5 @@ $(function() {
 });
 </script>
 
+<H2>実行中コンテナのホスト名：<?php echo gethostname(); ?></H2>
 
