@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ro-phpmyadmin
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ro-phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+        - containerPort: 80
+        env:
+        - name: PMA_ARBITRARY
+          value: "1"
+        - name: PMA_HOST
+          value: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ro-phpmyadmin
+spec:
+  type: NodePort
+  selector:
+    app: ro-phpmyadmin
+  ports:
+  - protocol: TCP
+    port: 80
+    nodePort: 31520
