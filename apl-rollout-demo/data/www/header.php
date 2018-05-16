@@ -8,7 +8,7 @@
 <script src="javascripts/mt_framework.js"></script>
 </head>
 <body>
-
+      
 <?php
   // メッセージエリア
   if (isset($_SESSION["message"])) {

@@ -9,7 +9,6 @@ $_SESSION['view_counter'] = $_SESSION['view_counter'] + 1;
 $dao = new DaoPersons();
 $rslt = $dao->find_by_userid($_SESSION["userid"]);
 ?>
-
 <h1>アプリ ver 1.1</h1>
 
 <table>
