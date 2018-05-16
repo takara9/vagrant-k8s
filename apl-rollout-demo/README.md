@@ -1,8 +1,7 @@
-ロールアウトのデモ
+# 無停止ロールアウトのデモ用アプリ
 
 このコードは、ローカルのDocker-CEの開発環境では、docker-compose で起動できます。
 また、開発したコンテナをDockerHubに登録して、Kubernetesへデプロイもできます。
-
 
 
 
@@ -79,7 +78,8 @@ Removing image aplrolloutdemo_app
 Removing image aplrolloutdemo_web
 ~~~
 
-# コンテナのビルドと登録
+
+# コンテナのビルドとDockerHubへの登録
 
 k8s にデプロイするにあたり、ビルドするコンテナ
 
@@ -203,7 +203,7 @@ maho/contents       1.1                 eb070c175994        2 hours ago         
 ~~~
 
 
-## Kubernetesへのデプロイ
+# Kubernetesへのデプロイ
 
 ~~~
 $ cd k8s
