@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ro-web-apserver
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: ro-web-apserver
+    spec:
+      restartPolicy: Always
+      hostname: app
+      containers:	     
+      - name: web
+        image: maho/webserver:1.0
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www
+          name: www-vol
+      - name: app
+        image: maho/apserver:1.0
+        env:
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          value: root
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www
+          name: www-vol
+      initContainers:
+      - name: cp-contents
+        image: maho/contents:1.0
+        command: ["cp",  "-r", ".", "/var/www"]
+        volumeMounts:
+        - mountPath: /var/www
+          name: www-vol
+      - name: chmod 
+        image: busybox
+        command: ["chmod", "-R", "a+r", "/var/www"]
+        volumeMounts:
+        - mountPath: /var/www
+          name: www-vol
+      volumes:
+      - name: www-vol
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ro-web-apserver
+spec:
+  type: NodePort
+  selector:
+    app: ro-web-apserver
+  ports:
+  - protocol: TCP
+    port: 80
+    nodePort: 31514
