@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: production
+spec:
+  hard:
+    cpu: 800m
+    memory: 1200Mi
