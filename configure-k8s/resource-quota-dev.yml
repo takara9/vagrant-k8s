@@ -5,4 +5,5 @@ metadata:
 spec:
   hard:
     cpu: 400m
-    memory: 1Gi
+    memory: 800Mi
+

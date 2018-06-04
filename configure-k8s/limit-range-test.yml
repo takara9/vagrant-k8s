@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limit-dev
+  namespace: test
+spec:
+  limits:
+  - default:
+      cpu: 0.3
+      memory: 256Mi
+    defaultRequest:
+      cpu: 0.2
+      memory: 128Mi
+    type: Container
+

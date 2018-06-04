@@ -8,6 +8,7 @@ Vagrant.configure(2) do |config|
       s.vm.box = "ubuntu/xenial64"
       s.vm.hostname = "node-#{i}"
 
+      #s.vm.network :forwarded_port, host: 4040, guest: 4040
       #public_ip = "192.168.1.#{i+90}"
       #s.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
       #if i == 1 then
