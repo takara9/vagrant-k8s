@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-shell
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    command: ["tail", "-f", "/dev/null"]
+    env:
+      - name: CONF_ENEMIES
+        valueFrom:
+          configMapKeyRef:
+            name: apl-env
+            key: enemies
+      - name: CONF_LIVES
+        valueFrom:
+          configMapKeyRef:
+            name: apl-env
+            key: lives
+      - name: CONF_ALLOWED
+        valueFrom:
+          configMapKeyRef:
+            name: apl-env
+            key: allowed

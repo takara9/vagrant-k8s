@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-shell
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    command: ["tail", "-f", "/dev/null"]

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-shell
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    command: ["tail", "-f", "/dev/null"]
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: apl-config
+  restartPolicy: Never  
