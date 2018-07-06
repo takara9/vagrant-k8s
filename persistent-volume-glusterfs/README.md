@@ -3,14 +3,6 @@
 Kubernetes - Heketi - GlusterFS テスト用 Vagrantfile
 
 
-## プラグインのインストール
-仮想サーバーの起動を早くするために導入します。
-
-```console
-$ vagrant plugin install vagrant-cachier
-```
-
-
 ## GlusterFS と Heketi サーバーの開始
 
 次の方法で、３つのGlusterFSサーバー と一つのHeketiサーバーが起動します。
@@ -19,15 +11,14 @@ $ vagrant plugin install vagrant-cachier
 $ vagrant up
 ```
 
-## Heketi サーバーのセットアップ
-
-rootで heketiを起動します。
+起動が完了したら、次のコマンドで稼働を確認します。
 
 ```console
-$ vagrant ssh heketi
-$ sudo -s
-# ./heketi --config heketi.json
+$ curl http://172.20.1.10:8080/hello;echo
+HelloWorld from GlusterFS Application
 ```
+
+
 
 もう一つウィンドを開いて、クライアントでセットアップします。
 
@@ -41,11 +32,12 @@ Cluster id: d2d59b4d954d2b93ea9066ee55ee1daf
 
 クラスタへのノードの追加します。 前のステップで得たCluster id を -cluster=にセットします。 それからノードのIPアドレスは、テスト環境に合わせて、Vagrantfileを変更してください。
 ```console
-$ ./heketi-cli node add -cluster=d2d59b4d954d2b93ea9066ee55ee1daf -zone=1 -management-host-name=192.168.1.91 -storage-host-name=192.168.1.91
+$ ./heketi-cli node add -cluster=d2d59b4d954d2b93ea9066ee55ee1daf -zone=1 -management-host-name=172.20.1.11 -storage-host-name=172.20.1.11
 
-$ ./heketi-cli node add -cluster=d2d59b4d954d2b93ea9066ee55ee1daf -zone=1 -management-host-name=192.168.1.92 -storage-host-name=192.168.1.92
+$ ./heketi-cli node add -cluster=d2d59b4d954d2b93ea9066ee55ee1daf -zone=1 -management-host-name=172.20.1.12 -storage-host-name=172.20.1.12
 
-$ ./heketi-cli node add -cluster=d2d59b4d954d2b93ea9066ee55ee1daf -zone=1 -management-host-name=192.168.1.93 -storage-host-name=192.168.1.93
+$ ./heketi-cli node add -cluster=d2d59b4d954d2b93ea9066ee55ee1daf -zone=1 -management-host-name=172.20.1.13 -storage-host-name=172.20.1.13
+
 ```
 
 クラスタのメンバーのリスト
@@ -77,6 +69,8 @@ $ ./heketi-cli device add --name=/dev/sdc --node=e15a6b9d0727a64f103d9aa759c3b82
 ```
 
 セットアップは以上で、ボリュームはkubernetes側から作成になります。
+
+
 heketi側で実施してテストするには、以下の様にします。
 
 ```console
