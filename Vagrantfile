@@ -20,8 +20,8 @@ Vagrant.configure(2) do |config|
       #  s.vm.network :forwarded_port, host: 8001, guest: 8001
       #end
 
-      public_ip = "192.168.1.#{i+90}"
-      s.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
+      #public_ip = "192.168.1.#{i+90}"
+      #s.vm.network :public_network, ip: public_ip, bridge: "en0: Ethernet"
 
       private_ip = "172.16.20.#{i+10}"
       s.vm.network "private_network", ip: private_ip
