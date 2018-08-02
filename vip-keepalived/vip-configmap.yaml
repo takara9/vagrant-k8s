@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: vip-configmap
 data:
-  192.168.1.103: vip/echoheaders
+  192.168.1.102: default/web-service
 
