@@ -1,5 +1,11 @@
 # k8s cluster on Vagrant virtual servers on MacOS or Windows10
 
+*** WARNING ***
+
+This repository is no longer maintenance.
+please move https://github.com/takara9/vagrant-kubernetes
+
+
 
 # Prerequisite
 
