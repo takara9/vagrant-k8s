@@ -2,7 +2,7 @@
 
 *** WARNING ***
 
-This repository is no longer maintenance.
+This repository is no longer maintenanced.
 please move https://github.com/takara9/vagrant-kubernetes
 
 
