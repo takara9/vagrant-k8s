@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "cfenv": "^1.0.4",
-    "cloudant": "^1.8.0"
+    "cloudant": "^1.10.0"
   }
 }
